@@ -8,5 +8,21 @@ Query: (genlInformation Nancy_Vrentas ?rank ?race ?gender ?age ?trr_percentile ?
  	  (gender ?officer ?gender)
  	  (age ?officer ?age)
  	  (trr_percentile ?officer ?trr_percentile)
- 	  (internal_allegation_percentile ?officer ?internal_allegation_percentile)
+ 	  (internal_allegation_percentile ?officer ?internal_allegation_percentile)a
  	  (complaint_percentile ?officer ?complaint_percentile))
+
+(<== (calculateHighRisk ?off1 ?off2)
+	(race ?off1 ?theRace1)
+	(race ?off2 ?theRace2)
+	(same ?theRace1 ?theRace2)
+	(different ?off1 ?off2)
+)
+
+(<== (calculateLowRisk ?off1 ?off2)
+	(race ?off1 ?theRace1)
+	(race ?off2 ?theRace2)
+	(different ?theRace1 ?theRace2)
+	(different ?off1 ?off2)
+)
+
+
