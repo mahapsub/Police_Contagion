@@ -1,0 +1,12 @@
+(in-microtheory​ KRR-policecontagionrulesMt)
+;;;Finding general information about an officer
+Query: (genlInformation Nancy_Vrentas ?rank ?race ?gender ?age ?trr_percentile ?internal_allegation_percentile ?complaint_percentile)
+
+(<== (genlInformation ?officer ?rank ?race ?gender ?age ?trr_percentile ?internal_allegation_percentile ?complaint_percentile)
+ 	  (rank ?officer ?rank)
+ 	  (race ?officer ?race)
+ 	  (gender ?officer ?gender)
+ 	  (age ?officer ?age)
+ 	  (trr_percentile ?officer ?trr_percentile)
+ 	  (internal_allegation_percentile ?officer ?internal_allegation_percentile)
+ 	  (complaint_percentile ?officer ?complaint_percentile))
