@@ -1,6 +1,7 @@
-(in-microtheory​ KRR-policecontagionrulesMt)
+(in-microtheory​ SubratRules)
+
 ;;;Finding general information about an officer
-Query: (genlInformation Nancy_Vrentas ?rank ?race ?gender ?age ?trr_percentile ?internal_allegation_percentile ?complaint_percentile)
+;;;Query: (genlInformation Nancy_Vrentas ?rank ?race ?gender ?age ?trr_percentile ?internal_allegation_percentile ?complaint_percentile)
 
 (<== (genlInformation ?officer ?rank ?race ?gender ?age ?trr_percentile ?internal_allegation_percentile ?complaint_percentile)
  	  (rank ?officer ?rank)
@@ -8,28 +9,16 @@ Query: (genlInformation Nancy_Vrentas ?rank ?race ?gender ?age ?trr_percentile ?
  	  (gender ?officer ?gender)
  	  (age ?officer ?age)
  	  (trr_percentile ?officer ?trr_percentile)
- 	  (internal_allegation_percentile ?officer ?internal_allegation_percentile)a
+ 	  (internal_allegation_percentile ?officer ?internal_allegation_percentile)
  	  (complaint_percentile ?officer ?complaint_percentile))
 
-(<== (calculateHighRisk ?off1 ?off2)
-	(race ?off1 ?theRace1)
-	(race ?off2 ?theRace2)
-	(same ?theRace1 ?theRace2)
-	(different ?off1 ?off2)
-)
-
-(<== (calculateLowRisk ?off1 ?off2)
-	(race ?off1 ?theRace1)
-	(race ?off2 ?theRace2)
-	(different ?theRace1 ?theRace2)
-	(different ?off1 ?off2)
-)
 
 (<== (balancedAgeDiff ?off1 ?off2)
      (age ?off1 ?age1)
      (age ?off2 ?age2)
      (different ?age1 ?age2)
 )
+
 
 (<== (balancedAllegationAndComplaint ?off1 ?off2)
      (internal_allegation_percentile ?off1 ?all1)
@@ -55,11 +44,19 @@ Query: (genlInformation Nancy_Vrentas ?rank ?race ?gender ?age ?trr_percentile ?
      (different ?all1 ?all2)
 )
 
+
 (<== (balancedGender ?off1 ?off2)
      (gender ?off1 ?all1)
      (gender ?off2 ?all2)
      (different ?all1 ?all2)
 )
+(<== (unbalancedGender ?off1 ?off2)
+     (gender ?off1 ?all1)
+     (gender ?off2 ?all2)
+     (same ?all1 ?all2)
+)
+
+;;;(unbalancedAgeDiff Nancy_Vrentas ?off2)
 
 (<== (unbalancedAgeDiff ?off1 ?off2)
      (age ?off1 ?age1)
@@ -84,8 +81,8 @@ Query: (genlInformation Nancy_Vrentas ?rank ?race ?gender ?age ?trr_percentile ?
      (complaint_percentile ?off2 ?allc2)
      (same ?allc1 ?allc2)
 )
-;;;
-(<== (calculateBalancedRisk ?off1 ?off2)
+;;;nancy is balanced with noone
+(<== (calculateBalancedRiskOfficerPairing ?off1 ?off2)
 	(balancedAgeDiff ?off1 ?off2)
 	(balancedTRRAndComplaint ?off1 ?off2)
 	(balancedRace ?off1 ?off2)
@@ -93,13 +90,26 @@ Query: (genlInformation Nancy_Vrentas ?rank ?race ?gender ?age ?trr_percentile ?
 	(balancedAllegationAndComplaint ?off1 ?off2)
 )
 ;;;
-(<== (calculateUnBalancedRisk ?off1 ?off2)
+(<== (calculateUnBalancedRiskOfficerPairing ?off1 ?off2)
 	(unbalancedAgeDiff ?off1 ?off2)
 	(unbalancedTRRAndComplaint ?off1 ?off2)
-	(unbalancedRace ?off1 ?off2)
 	(unbalancedGender ?off1 ?off2)
 	(unbalancedAllegationAndComplaint ?off1 ?off2)
 )
+
+
+(<== (balancedGender ?off1 ?off2)
+     (gender ?off1 ?all1)
+     (gender ?off2 ?all2)
+     (different ?all1 ?all2)
+)
+
+(<== (unBalancedGender ?off1 ?off2)
+     (gender ?off1 ?all1)
+     (gender ?off2 ?all2)
+     (same ?all1 ?all2)
+     )
+
 
 (<== (middleAgedOfficerPairing ?off1 ?off2)
 	 (age ?off1 middle-aged)
@@ -107,38 +117,40 @@ Query: (genlInformation Nancy_Vrentas ?rank ?race ?gender ?age ?trr_percentile ?
 )
 
 (<== (oldOfficerPairing ?off1 ?off2)
-	 (age ?off1 middle-aged)
-	 (age ?off2 middle-aged)
+	 (age ?off1 old)
+	 (age ?off2 old)
+	 
 )
 
 (<== (highTRRPairing ?off1 ?off2)
 	 (trr_percentile ?off1 high)
 	 (trr_percentile ?off2 high)
+	 
 )
 
 (<== (lowTRRPairing ?off1 ?off2)
 	 (trr_percentile ?off1 low)
 	 (trr_percentile ?off2 low)
+	 
 )
 
-(<== (highAllegationPercentilePairing ?off1 ?off2)
-	 (complaint_percentile ?off1 high)
-	 (complaint_percentile ?off2 high)
-)
 
 (<== (lowComplaintPercentilePairing ?off1 ?off2)
 	 (complaint_percentile ?off1 low)
 	 (complaint_percentile ?off2 low)
+	 
 )
 
 (<== (highComplaintPercentilePairing ?off1 ?off2)
 	 (complaint_percentile ?off1 high)
 	 (complaint_percentile ?off2 high)
+	 
 )
 
 (<== (highAllegationPercentilePairing ?off1 ?off2)
 	 (internal_allegation_percentile ?off1 high)
 	 (internal_allegation_percentile ?off2 high)
+	 
 )
 
 (<== (lowAllegationPercentilePairing ?off1 ?off2)
@@ -146,18 +158,26 @@ Query: (genlInformation Nancy_Vrentas ?rank ?race ?gender ?age ?trr_percentile ?
 	 (internal_allegation_percentile ?off2 low)
 )
 
-(<== (calculateHighestRiskOfficerPairings ?off1 ?off2)
+
+;;; fast query: (calculateHighestRiskOfficerPairings Khalil_Muhammad ?off2 
+  ?sum_risk)
+(<== (calculateHighestRiskOfficerPairings ?off1 ?off2 ?sum_risk)
 	(oldOfficerPairing ?off1 ?off2)
 	(lowTRRPairing ?off1 ?off2)
 	(highAllegationPercentilePairing ?off1 ?off2)
 	(highComplaintPercentilePairing ?off1 ?off2)
-	(oldOfficerPairing ?off1 ?off2)
+	(risk_score ?off1 ?rs1)
+	(risk_score ?off2 ?rs2)
+	(sum ?rs1 ?rs2 ?sum_risk)
 )
 
-(<== (calculateLowestRiskPairing ?off1 ?off2)
-	(youngOfficerPairing ?off1 ?off2)
+;;;(calculateLowestRiskPairing Emmanuel_Zambrano ?off2 ?sum_risk)
+(<== (calculateLowestRiskPairing ?off1 ?off2 ?sum_risk)
+	(middleAgedOfficerPairing ?off1 ?off2)
 	(highTRRPairing ?off1 ?off2)
 	(lowAllegationPercentilePairing ?off1 ?off2)
 	(lowComplaintPercentilePairing ?off1 ?off2)
-	(oldOfficerPairing ?off1 ?off2)
+	(risk_score ?off1 ?rs1)
+	(risk_score ?off2 ?rs2)
+	(sum ?rs1 ?rs2 ?sum_risk)
 )
